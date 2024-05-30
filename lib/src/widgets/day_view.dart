@@ -80,6 +80,8 @@ class _DayViewState extends ZoomableHeadersWidgetState<DayView> {
   /// we can restore the original event before the callback.
   late DateTime originalResizeEventEnd;
 
+  DateTime? moved;
+
   @override
   void initState() {
     super.initState();
@@ -119,8 +121,14 @@ class _DayViewState extends ZoomableHeadersWidgetState<DayView> {
           Offset correctedOffset = Offset(localOffset.dx, localOffset.dy + (verticalScrollController?.offset ?? 0) - widget.style.headerSize);
           DateTime newStartTime = widget.date.add(calculateOffsetHourMinute(correctedOffset).asDuration);
           print("move: $newStartTime");
+          setState(() {
+            moved = newStartTime;
+          });
         },
         onAcceptWithDetails: (details) {
+          setState(() {
+            moved = null;
+          });
           // Drag details contains the global position of the drag event. First,
           // we convert it to a local position on the widget.
           RenderBox renderBox = context.findRenderObject() as RenderBox;
@@ -210,11 +218,13 @@ class _DayViewState extends ZoomableHeadersWidgetState<DayView> {
         )));
 
     if (widget.hoursColumnStyle.width > 0) {
-      children.add(Positioned(
-        top: 0,
-        left: widget.isRTL ? null : 0,
-        child: HoursColumn.fromHeadersWidgetState(parent: this),
-      ));
+      children.add(
+        Positioned(
+          top: 0,
+          left: widget.isRTL ? null : 0,
+          child: HoursColumn.fromHeadersWidgetState(parent: this, dt: moved,),
+        )
+      );
     }
 
     if (Utils.sameDay(widget.date) && widget.minimumTime.atDate(widget.date).isBefore(DateTime.now()) && widget.maximumTime.atDate(widget.date).isAfter(DateTime.now())) {

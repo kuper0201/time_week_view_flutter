@@ -256,7 +256,8 @@ class _WeekViewState extends ZoomableHeadersWidgetState<WeekView> {
           ),
           Padding(
             padding: EdgeInsets.only(top: widget.style.headerSize),
-            child: HoursColumn.fromHeadersWidgetState(parent: this),
+            child: Container()
+            // HoursColumn.fromHeadersWidgetState(parent: this),
           ),
         ],
       );
