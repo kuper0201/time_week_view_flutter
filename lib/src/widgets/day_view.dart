@@ -121,6 +121,7 @@ class _DayViewState extends ZoomableHeadersWidgetState<DayView> {
           Offset localOffset = renderBox.globalToLocal(details.offset);
           Offset correctedOffset = Offset(localOffset.dx, localOffset.dy + (verticalScrollController?.offset ?? 0) - widget.style.headerSize);
           DateTime newStartTime = widget.date.add(calculateOffsetHourMinute(correctedOffset).asDuration);
+          newStartTime = roundTimeToFitGrid(newStartTime, gridGranularity: const Duration(minutes: 5));
           setState(() {
             moved = newStartTime;
           });
@@ -142,6 +143,7 @@ class _DayViewState extends ZoomableHeadersWidgetState<DayView> {
           Offset correctedOffset = Offset(localOffset.dx, localOffset.dy + (verticalScrollController?.offset ?? 0) - widget.style.headerSize);
 
           DateTime newStartTime = widget.date.add(calculateOffsetHourMinute(correctedOffset).asDuration);
+          newStartTime = roundTimeToFitGrid(newStartTime, gridGranularity: const Duration(minutes: 5));
           widget.dragAndDropOptions!.onEventDragged(details.data, newStartTime);
         },
       );

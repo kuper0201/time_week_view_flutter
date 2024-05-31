@@ -35,7 +35,7 @@ class _HomeViewState extends State<HomeView> {
           },
         ),
         resizeEventOptions: ResizeEventOptions(
-          snapToGridGranularity: const Duration(minutes: 1),
+          snapToGridGranularity: const Duration(minutes: 5),
           onEventResized: (event, newEndTime) {
             setState(() {
               event.end = newEndTime;
