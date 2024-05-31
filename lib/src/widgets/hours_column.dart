@@ -30,8 +30,11 @@ class HoursColumn extends StatefulWidget {
   /// Building method for building background decoration below single time displayed on the side border.
   final HoursColumnBackgroundBuilder? hoursColumnBackgroundBuilder;
   
-  /// For Indocator
+  /// For Item Move Indicator
   final DateTime? dt;
+
+  /// For Item Resize Indicator
+  final DateTime? resizing;
 
   /// Creates a new hours column instance.
   HoursColumn({
@@ -44,6 +47,7 @@ class HoursColumn extends StatefulWidget {
     HoursColumnTimeBuilder? hoursColumnTimeBuilder,
     this.hoursColumnBackgroundBuilder,
     this.dt,
+    this.resizing,
   })  : assert(minimumTime < maximumTime),
         topOffsetCalculator = topOffsetCalculator ?? DefaultBuilders.defaultTopOffsetCalculator,
         hoursColumnTimeBuilder = hoursColumnTimeBuilder ?? DefaultBuilders.defaultHoursColumnTimeBuilder,
@@ -53,7 +57,8 @@ class HoursColumn extends StatefulWidget {
   HoursColumn.fromHeadersWidgetState({
     Key? key,
     required ZoomableHeadersWidgetState parent,
-    required DateTime? dt
+    required DateTime? dt,
+    required DateTime? resizing,
   }) : this(
           key: key,
           minimumTime: parent.widget.minimumTime,
@@ -63,7 +68,8 @@ class HoursColumn extends StatefulWidget {
           onHoursColumnTappedDown: parent.widget.onHoursColumnTappedDown,
           hoursColumnTimeBuilder: parent.widget.hoursColumnTimeBuilder,
           hoursColumnBackgroundBuilder: parent.widget.hoursColumnBackgroundBuilder,
-          dt: dt
+          dt: dt,
+          resizing: resizing
         );
 
   
@@ -84,7 +90,6 @@ class HoursColumn extends StatefulWidget {
 }
 
 class _HoursColumnState extends State<HoursColumn> {
-
   @override
   Widget build(BuildContext context) {
     final singleHourSize = widget.topOffsetCalculator(widget.maximumTime) / (widget.maximumTime.hour);
@@ -119,7 +124,31 @@ class _HoursColumnState extends State<HoursColumn> {
         right: 0,
         child: Align(
           alignment: widget.style.textAlignment,
-          child: widget.hoursColumnTimeBuilder(widget.style, HourMinute.fromDateTime(dateTime: widget.dt!)),
+          child: Container(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.lightGreen),
+            child: Padding(
+              padding: const EdgeInsets.all(3),
+              child: widget.hoursColumnTimeBuilder(widget.style, HourMinute.fromDateTime(dateTime: widget.dt!)),
+            )
+          )
+        )
+      ));
+    }
+
+    if(widget.resizing != null) {
+      t.add(Positioned(
+        top: widget.topOffsetCalculator(HourMinute.fromDateTime(dateTime: widget.resizing!)) - ((widget.style.textStyle.fontSize ?? 14) / 2),
+        left: 0,
+        right: 0,
+        child: Align(
+          alignment: widget.style.textAlignment,
+          child: Container(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.lightGreen),
+            child: Padding(
+              padding: const EdgeInsets.all(3),
+              child: widget.hoursColumnTimeBuilder(widget.style, HourMinute.fromDateTime(dateTime: widget.resizing!)),
+            )
+          )
         )
       ));
     }

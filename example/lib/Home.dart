@@ -14,28 +14,31 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   void initState() {
-    lst.add(FlutterWeekViewEvent(title: "title", description: "", start: now, end: now.add(Duration(hours: 2))));
+    lst.add(FlutterWeekViewEvent(title: "title", description: "", start: now, end: now.add(const Duration(hours: 2))));
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Scaffold(
       body: DayView(
-        userZoomable: false,
+        userZoomable: true,
         events: lst,
         date: DateTime.now(),
         dragAndDropOptions: DragAndDropOptions(
           onEventDragged:(event, newStartTime) {
             final dur = event.end.subtract(Duration(hours: event.start.hour, minutes: event.start.minute));
             setState(() {
-              // int idx = lst.indexOf(event);
-              // lst[idx].start = newStartTime;
-              // lst[idx].end = event.start.add(Duration(hours: dur.hour, minutes: dur.minute));
               event.start = newStartTime;
               event.end = event.start.add(Duration(hours: dur.hour, minutes: dur.minute));
+            });
+          },
+        ),
+        resizeEventOptions: ResizeEventOptions(
+          snapToGridGranularity: const Duration(minutes: 1),
+          onEventResized: (event, newEndTime) {
+            setState(() {
+              event.end = newEndTime;
             });
           },
         ),

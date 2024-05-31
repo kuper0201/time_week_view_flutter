@@ -81,6 +81,7 @@ class _DayViewState extends ZoomableHeadersWidgetState<DayView> {
   late DateTime originalResizeEventEnd;
 
   DateTime? moved;
+  DateTime? resized;
 
   @override
   void initState() {
@@ -120,7 +121,6 @@ class _DayViewState extends ZoomableHeadersWidgetState<DayView> {
           Offset localOffset = renderBox.globalToLocal(details.offset);
           Offset correctedOffset = Offset(localOffset.dx, localOffset.dy + (verticalScrollController?.offset ?? 0) - widget.style.headerSize);
           DateTime newStartTime = widget.date.add(calculateOffsetHourMinute(correctedOffset).asDuration);
-          print("move: $newStartTime");
           setState(() {
             moved = newStartTime;
           });
@@ -222,7 +222,7 @@ class _DayViewState extends ZoomableHeadersWidgetState<DayView> {
         Positioned(
           top: 0,
           left: widget.isRTL ? null : 0,
-          child: HoursColumn.fromHeadersWidgetState(parent: this, dt: moved,),
+          child: HoursColumn.fromHeadersWidgetState(parent: this, dt: moved, resizing: resized,),
         )
       );
     }
@@ -274,6 +274,7 @@ class _DayViewState extends ZoomableHeadersWidgetState<DayView> {
         setState(() {
           reset();
           createEventsDrawProperties();
+          resized = null;
         });
         widget.resizeEventOptions!.onEventResized(event, newEventEnd);
       },
@@ -323,6 +324,9 @@ class _DayViewState extends ZoomableHeadersWidgetState<DayView> {
         newEventEnd = roundTimeToFitGrid(newEventEnd, gridGranularity: gridGranularity);
       }
       event.end = newEventEnd;
+      setState(() {
+        resized = newEventEnd;
+      });
     }
 
     setState(() {
